@@ -12,13 +12,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.skilldistillery.checklists.entities.CheckList;
 
-class CheckListTest {
-	
+import com.skilldistillery.checklists.entities.CheckListType;
+
+class CheckListTypeTest {
+
 	private static EntityManagerFactory emf;
 	private EntityManager em;
-	private CheckList checkList;
+	private CheckListType checkListType;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -33,27 +34,22 @@ class CheckListTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		em = emf.createEntityManager();
-		checkList = em.find(CheckList.class, 1);
+		checkListType = em.find(CheckListType.class, 1);
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
 		em.close();
-		checkList = null;
+		checkListType = null;
 	}
 
 	@Test
 	void test_checkList_basic() {
-		assertNotNull(checkList);
-		assertEquals("Brush Teeth", checkList.getName());
-		assertTrue(checkList.getName().length()>0);
+		assertNotNull(checkListType);
+		assertEquals("Personal Hygiene", checkListType.getName());
+		
 	}
 	
-	@Test
-	void test_checkList_to_checkListType_mapping() {
-		assertNotNull(checkList.getCheckListType());
-		assertEquals(1, checkList.getCheckListType().getId());
-		assertEquals("Personal Hygiene", checkList.getCheckListType().getName());
-	}
+	
 
 }
