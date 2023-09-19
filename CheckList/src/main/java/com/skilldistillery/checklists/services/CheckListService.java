@@ -1,13 +1,14 @@
 package com.skilldistillery.checklists.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.skilldistillery.checklists.entities.CheckList;
 
 public interface CheckListService {
 	List<CheckList> listAllListItems();
 
-	CheckList getListItem(int listItemId);
+	Optional<CheckList> getListItem(int listItemId);
 
 	CheckList create(CheckList newListItem);
 

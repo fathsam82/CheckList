@@ -7,6 +7,7 @@
 		
 		
 		<class>com.skilldistillery.checklists.entities.CheckList</class>
+		<class>com.skilldistillery.checklists.entities.CheckListType</class>
 		
 		<properties>
 			<property name="javax.persistence.jdbc.url"
