@@ -12,13 +12,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.skilldistillery.checklists.entities.CheckList;
+import com.skilldistillery.checklists.entities.User;
 
-class CheckListTest {
-	
+class UserTest {
+
 	private static EntityManagerFactory emf;
 	private EntityManager em;
-	private CheckList checkList;
+	private User user;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -33,34 +33,29 @@ class CheckListTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		em = emf.createEntityManager();
-		checkList = em.find(CheckList.class, 1);
+		user = em.find(User.class, 1);
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
 		em.close();
-		checkList = null;
+		user = null;
 	}
 
 	@Test
-	void test_checkList_basic() {
-		assertNotNull(checkList);
-		assertEquals("Brush Teeth", checkList.getName());
-		assertEquals("Sep 30 2023", checkList.getDueDate());
+	void test_user_basic() {
+		assertNotNull(user);
+		assertEquals("johnnyboy", user.getUsername());
+		assertEquals(1, user.getId());
+		
+		
 	}
 	
 	@Test
-	void test_checkList_to_checkListType_mapping() {
-		assertNotNull(checkList.getCheckListType());
-		assertEquals(1, checkList.getCheckListType().getId());
-		assertEquals("Personal Hygiene", checkList.getCheckListType().getName());
-	}
-	
-	@Test
-	 void test_checkList_to_user_mapping() {
-		assertNotNull(checkList.getUser());
-		assertEquals(1, checkList.getUser().getId());
-		assertEquals("johnnyboy", checkList.getUser().getUsername());
+	void test_user_checkList_mapping() {
+		assertNotNull(user);
+		assertTrue(user.getChecklists().size()>0);
+		
 		
 	}
 

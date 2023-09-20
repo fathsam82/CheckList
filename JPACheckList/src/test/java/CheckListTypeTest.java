@@ -44,7 +44,7 @@ class CheckListTypeTest {
 	}
 
 	@Test
-	void test_checkList_basic() {
+	void test_checkListType_basic() {
 		assertNotNull(checkListType);
 		assertEquals("Personal Hygiene", checkListType.getName());
 		

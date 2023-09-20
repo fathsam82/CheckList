@@ -2,6 +2,7 @@ package com.skilldistillery.checklists.entities;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,10 +24,22 @@ public class CheckList {
 	private String frequency;
 
 	private String description;
+	
+	private Boolean completed;
+	
+	@Column(name = "due_date")
+	private String dueDate;
+	
+	@Column(name = "complete_date")
+	private String completeDate;
 
 	@ManyToOne
 	@JoinColumn(name = "check_list_type_id")
 	private CheckListType checkListType;
+	
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	public CheckList() {
 
@@ -70,6 +83,38 @@ public class CheckList {
 
 	public void setCheckListType(CheckListType checkListType) {
 		this.checkListType = checkListType;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Boolean getCompleted() {
+		return completed;
+	}
+
+	public void setCompleted(Boolean completed) {
+		this.completed = completed;
+	}
+
+	public String getDueDate() {
+		return dueDate;
+	}
+
+	public void setDueDate(String dueDate) {
+		this.dueDate = dueDate;
+	}
+
+	public String getCompleteDate() {
+		return completeDate;
+	}
+
+	public void setCompleteDate(String completeDate) {
+		this.completeDate = completeDate;
 	}
 
 	@Override

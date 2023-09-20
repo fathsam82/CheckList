@@ -28,6 +28,22 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `user`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `user` ;
+
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(255) NOT NULL,
+  `username` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `enabled` TINYINT NOT NULL,
+  `role` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `check_list`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `check_list` ;
@@ -37,12 +53,22 @@ CREATE TABLE IF NOT EXISTS `check_list` (
   `name` VARCHAR(100) NOT NULL,
   `description` TEXT NULL,
   `frequency` VARCHAR(200) NULL,
+  `completed` TINYINT(4) NULL,
+  `due_date` VARCHAR(45) NULL,
+  `complete_date` VARCHAR(45) NULL,
   `check_list_type_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_check_list_check_list_type_idx` (`check_list_type_id` ASC),
+  INDEX `fk_check_list_user1_idx` (`user_id` ASC),
   CONSTRAINT `fk_check_list_check_list_type`
     FOREIGN KEY (`check_list_type_id`)
     REFERENCES `check_list_type` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_check_list_user1`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -73,12 +99,22 @@ COMMIT;
 
 
 -- -----------------------------------------------------
+-- Data for table `user`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `checklistdb`;
+INSERT INTO `user` (`id`, `email`, `username`, `password`, `enabled`, `role`) VALUES (1, 'john@aol.com', 'johnnyboy', '1234', 1, 'standard');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
 -- Data for table `check_list`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `checklistdb`;
-INSERT INTO `check_list` (`id`, `name`, `description`, `frequency`, `check_list_type_id`) VALUES (1, 'Brush Teeth', 'Brush and floss', 'Every morning', 1);
-INSERT INTO `check_list` (`id`, `name`, `description`, `frequency`, `check_list_type_id`) VALUES (2, 'Shower', 'Shampoo, condition hair, wash body and face', 'Every morning', 1);
+INSERT INTO `check_list` (`id`, `name`, `description`, `frequency`, `completed`, `due_date`, `complete_date`, `check_list_type_id`, `user_id`) VALUES (1, 'Brush Teeth', 'Brush and floss', 'Every morning', 1, 'Sep 30 2023', 'Sep 29 2023', 1, 1);
+INSERT INTO `check_list` (`id`, `name`, `description`, `frequency`, `completed`, `due_date`, `complete_date`, `check_list_type_id`, `user_id`) VALUES (2, 'Shower', 'Shampoo, condition hair, wash body and face', 'Every morning', 1, 'Sep 30 2023', 'Sep 29 2023', 1, 1);
 
 COMMIT;
 
