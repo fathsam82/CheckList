@@ -1,7 +1,7 @@
 package com.skilldistillery.checklists.controllers;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,64 +20,81 @@ import org.springframework.web.bind.annotation.RestController;
 import com.skilldistillery.checklists.entities.CheckList;
 import com.skilldistillery.checklists.services.CheckListService;
 
-@CrossOrigin({ "*", "http://localhost/" })
 @RestController
 @RequestMapping("api")
+@CrossOrigin({ "*", "http://localhost/" })
 public class CheckListController {
 
 	@Autowired
 	private CheckListService checkListService;
+	
+	private String username = "johnnyboy";  //temp
 
 	@GetMapping("checklists")
-	public List<CheckList> listAllCheckLists() {
-		return checkListService.listAllListItems();
+	public Set<CheckList> listAllCheckLists(HttpServletRequest req, HttpServletResponse res) {
+		return checkListService.listAllListItems(username);
 
 	}
 
 	@GetMapping("checklists/{listItemId}")
 	public CheckList getListItem(@PathVariable Integer listItemId, HttpServletResponse res) {
-		Optional<CheckList> checkList = checkListService.getListItem(listItemId);
-		if (checkList.isPresent()) {
-			return checkList.get();
-		} else {
+		
+		CheckList checkList = checkListService.getListItem(username, listItemId);
+		if(checkList == null) {
 			res.setStatus(404);
-			return null;
 		}
+		return checkList;
+
 	}
 
 	@PostMapping("checklists")
-	public CheckList createListItem(@RequestBody CheckList newListItem, HttpServletResponse res,
-			HttpServletRequest req) {
-		newListItem = checkListService.create(newListItem);
-		if (newListItem == null) {
-			res.setStatus(404);
-		} else {
-			res.setStatus(201);
-			StringBuffer url = req.getRequestURL();
-			res.setHeader("Location", url.append("/").append(newListItem.getId()).toString());
+	public CheckList createListItem(@RequestBody CheckList newListItem, HttpServletResponse res,HttpServletRequest req) {
+		try {
+			newListItem = checkListService.create(username, newListItem);
+			if(newListItem == null) {
+				res.setStatus(404);
+			}
+			else {
+				res.setStatus(201);
+				StringBuffer url = req.getRequestURL();
+				res.setHeader("Locatioin", url.append("/").append(newListItem.getId()).toString());
+			}
+		} catch (Exception e) {
+			res.setStatus(400);
+			newListItem = null;
+			e.printStackTrace();
 		}
-
 		return newListItem;
 
 	}
 
 	@PutMapping("checklists/{listItemId}")
-	public CheckList updateListItem(@PathVariable Integer listItemId, @RequestBody CheckList checkList,
-			HttpServletResponse res) {
-		checkList = checkListService.update(listItemId, checkList);
-		if (checkList == null) {
-			res.setStatus(404);
+	public CheckList updateListItem(@PathVariable Integer listItemId, @RequestBody CheckList checkList, HttpServletResponse res) {
+		checkList = checkListService.update(username, listItemId, checkList);
+		try {
+			if(checkList == null) {
+				res.setStatus(404);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			res.setStatus(400);
+			checkList = null;
 		}
-
 		return checkList;
+
 	}
 
 	@DeleteMapping("checklists/{listItemId}")
 	public void delete(@PathVariable Integer listItemId, HttpServletResponse res) {
-		if (checkListService.delete(listItemId)) {
-			res.setStatus(204);
-		} else {
-			res.setStatus(404);
+		try {
+			if(checkListService.delete(username, listItemId)) {
+				res.setStatus(204);
+			}
+			else {
+				res.setStatus(404);
+			}
+		} catch (Exception e) {
+			res.setStatus(400);
 		}
 	}
 }

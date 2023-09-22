@@ -1,7 +1,7 @@
 package com.skilldistillery.checklists.services;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.skilldistillery.checklists.entities.CheckList;
+import com.skilldistillery.checklists.entities.User;
 import com.skilldistillery.checklists.repositories.CheckListRepository;
+import com.skilldistillery.checklists.repositories.UserRepository;
 
 @Service
 @Transactional
@@ -18,55 +20,64 @@ public class CheckListServiceImpl implements CheckListService {
 	@Autowired
 	CheckListRepository checkListRepo;
 
+	@Autowired
+	UserRepository userRepo;
+	
 	@Override
-	public List<CheckList> listAllListItems() {
+	public Set<CheckList> listAllListItems(String username) {
 
-		return checkListRepo.findAll();
+		return checkListRepo.findByUser_Username(username);
 	}
 
 	@Override
-	public Optional<CheckList> getListItem(int listItemId) {
-
-		if (!checkListRepo.existsById(listItemId)) {
-			return Optional.empty();
+	public CheckList getListItem(String username, int listItemId) {
+		
+		CheckList checkList = null;
+		
+		Optional<CheckList> checkListOpt = checkListRepo.findById(listItemId);
+		if(checkListOpt.isPresent()&& checkListOpt.get().getUser().getUsername().equals(username)) {
+			checkList = checkListOpt.get();
 		}
+		return checkList;
 
-		return checkListRepo.findById(listItemId);
 	}
 
 	@Override
-	public CheckList create(CheckList newListItem) {
-		newListItem.setCheckListType(newListItem.getCheckListType());
-
-		return checkListRepo.saveAndFlush(newListItem);
-	}
-
-	@Override
-	public CheckList update(int listItemId, CheckList newListItem) {
-		CheckList updatedItem = null;
-		Optional<CheckList> existingListItem = checkListRepo.findById(listItemId);
-		if (existingListItem.isPresent()) {
-			updatedItem = existingListItem.get();
-			updatedItem.setName(newListItem.getName());
-			updatedItem.setDescription(newListItem.getDescription());
-			updatedItem.setFrequency(newListItem.getFrequency());
-			updatedItem.setCheckListType(newListItem.getCheckListType());
-			checkListRepo.saveAndFlush(updatedItem);
-
-			return updatedItem;
+	public CheckList create(String username, CheckList newListItem) {
+		User user = userRepo.findByUsername(username);
+		if(user != null) {
+			newListItem.setUser(user);
+			return checkListRepo.saveAndFlush(newListItem);
 		}
-
 		return null;
 	}
 
 	@Override
-	public boolean delete(int listItemId) {
-		if (checkListRepo.existsById(listItemId)) {
-			checkListRepo.deleteById(listItemId);
-			return true;
+	public CheckList update(String username, int listItemId, CheckList newListItem) {
+		CheckList existing = checkListRepo.findByIdAndUser_Username(listItemId, username);
+		if(existing != null) {
+			existing.setCompleted(newListItem.getCompleted());
+			existing.setCompleteDate(newListItem.getCompleteDate());
+			existing.setDueDate(newListItem.getDueDate());
+			existing.setName(newListItem.getName());
+			existing.setDescription(newListItem.getDescription());
+			existing.setFrequency(newListItem.getFrequency());
+			checkListRepo.saveAndFlush(existing);
+			
 		}
-
-		return false;
+		return existing;	
 	}
 
+	@Override
+	public boolean delete(String username, int listItemId) {
+		boolean deleted = false;
+		CheckList toDelete = checkListRepo.findByIdAndUser_Username(listItemId, username);
+		if(toDelete != null) {
+			checkListRepo.delete(toDelete);
+			deleted = true;
+		}
+		return deleted;
+			
+		}
+		
 }

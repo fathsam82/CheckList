@@ -1,18 +1,21 @@
 package com.skilldistillery.checklists.services;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import com.skilldistillery.checklists.entities.CheckList;
 
 public interface CheckListService {
-	List<CheckList> listAllListItems();
+	Set<CheckList> listAllListItems(String username);
 
-	Optional<CheckList> getListItem(int listItemId);
+	CheckList getListItem(String username, int listItemId);
 
-	CheckList create(CheckList newListItem);
+	CheckList create(String username, CheckList newListItem);
 
-	CheckList update(int listItemId, CheckList newListItem);
+	CheckList update(String username, int listItemId, CheckList newListItem);
 
-	boolean delete(int listItemId);
+	boolean delete(String username, int listItemId);
+	
+	
+	
 }
