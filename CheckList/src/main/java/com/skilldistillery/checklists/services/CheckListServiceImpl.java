@@ -22,7 +22,7 @@ public class CheckListServiceImpl implements CheckListService {
 
 	@Autowired
 	UserRepository userRepo;
-	
+
 	@Override
 	public Set<CheckList> listAllListItems(String username) {
 
@@ -31,11 +31,11 @@ public class CheckListServiceImpl implements CheckListService {
 
 	@Override
 	public CheckList getListItem(String username, int listItemId) {
-		
+
 		CheckList checkList = null;
-		
+
 		Optional<CheckList> checkListOpt = checkListRepo.findById(listItemId);
-		if(checkListOpt.isPresent()&& checkListOpt.get().getUser().getUsername().equals(username)) {
+		if (checkListOpt.isPresent() && checkListOpt.get().getUser().getUsername().equals(username)) {
 			checkList = checkListOpt.get();
 		}
 		return checkList;
@@ -45,7 +45,7 @@ public class CheckListServiceImpl implements CheckListService {
 	@Override
 	public CheckList create(String username, CheckList newListItem) {
 		User user = userRepo.findByUsername(username);
-		if(user != null) {
+		if (user != null) {
 			newListItem.setUser(user);
 			return checkListRepo.saveAndFlush(newListItem);
 		}
@@ -55,29 +55,30 @@ public class CheckListServiceImpl implements CheckListService {
 	@Override
 	public CheckList update(String username, int listItemId, CheckList newListItem) {
 		CheckList existing = checkListRepo.findByIdAndUser_Username(listItemId, username);
-		if(existing != null) {
+		if (existing != null) {
 			existing.setCompleted(newListItem.getCompleted());
 			existing.setCompleteDate(newListItem.getCompleteDate());
 			existing.setDueDate(newListItem.getDueDate());
 			existing.setName(newListItem.getName());
 			existing.setDescription(newListItem.getDescription());
 			existing.setFrequency(newListItem.getFrequency());
+			existing.setCheckListType(newListItem.getCheckListType());   //recently added
 			checkListRepo.saveAndFlush(existing);
-			
+
 		}
-		return existing;	
+		return existing;
 	}
 
 	@Override
 	public boolean delete(String username, int listItemId) {
 		boolean deleted = false;
 		CheckList toDelete = checkListRepo.findByIdAndUser_Username(listItemId, username);
-		if(toDelete != null) {
+		if (toDelete != null) {
 			checkListRepo.delete(toDelete);
 			deleted = true;
 		}
 		return deleted;
-			
-		}
-		
+
+	}
+
 }

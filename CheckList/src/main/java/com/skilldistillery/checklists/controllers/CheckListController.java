@@ -1,6 +1,6 @@
 package com.skilldistillery.checklists.controllers;
 
-import java.util.Optional;
+import java.security.Principal;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,20 +27,20 @@ public class CheckListController {
 
 	@Autowired
 	private CheckListService checkListService;
-	
-	private String username = "johnnyboy";  //temp
+
+//	private String username = "johnnyboy";   //temp
 
 	@GetMapping("checklists")
-	public Set<CheckList> listAllCheckLists(HttpServletRequest req, HttpServletResponse res) {
-		return checkListService.listAllListItems(username);
+	public Set<CheckList> listAllCheckLists(Principal principal, HttpServletRequest req, HttpServletResponse res) {
+		return checkListService.listAllListItems(principal.getName());
 
 	}
 
 	@GetMapping("checklists/{listItemId}")
-	public CheckList getListItem(@PathVariable Integer listItemId, HttpServletResponse res) {
-		
-		CheckList checkList = checkListService.getListItem(username, listItemId);
-		if(checkList == null) {
+	public CheckList getListItem(Principal principal, @PathVariable Integer listItemId, HttpServletResponse res) {
+
+		CheckList checkList = checkListService.getListItem(principal.getName(), listItemId);
+		if (checkList == null) {
 			res.setStatus(404);
 		}
 		return checkList;
@@ -48,13 +48,13 @@ public class CheckListController {
 	}
 
 	@PostMapping("checklists")
-	public CheckList createListItem(@RequestBody CheckList newListItem, HttpServletResponse res,HttpServletRequest req) {
+	public CheckList createListItem(Principal principal, @RequestBody CheckList newListItem, HttpServletResponse res,
+			HttpServletRequest req) {
 		try {
-			newListItem = checkListService.create(username, newListItem);
-			if(newListItem == null) {
+			newListItem = checkListService.create(principal.getName(), newListItem);
+			if (newListItem == null) {
 				res.setStatus(404);
-			}
-			else {
+			} else {
 				res.setStatus(201);
 				StringBuffer url = req.getRequestURL();
 				res.setHeader("Locatioin", url.append("/").append(newListItem.getId()).toString());
@@ -69,10 +69,11 @@ public class CheckListController {
 	}
 
 	@PutMapping("checklists/{listItemId}")
-	public CheckList updateListItem(@PathVariable Integer listItemId, @RequestBody CheckList checkList, HttpServletResponse res) {
-		checkList = checkListService.update(username, listItemId, checkList);
+	public CheckList updateListItem(Principal principal, @PathVariable Integer listItemId, @RequestBody CheckList checkList,
+			HttpServletResponse res) {
+		checkList = checkListService.update(principal.getName(), listItemId, checkList);
 		try {
-			if(checkList == null) {
+			if (checkList == null) {
 				res.setStatus(404);
 			}
 		} catch (Exception e) {
@@ -85,12 +86,11 @@ public class CheckListController {
 	}
 
 	@DeleteMapping("checklists/{listItemId}")
-	public void delete(@PathVariable Integer listItemId, HttpServletResponse res) {
+	public void delete(Principal principal, @PathVariable Integer listItemId, HttpServletResponse res) {
 		try {
-			if(checkListService.delete(username, listItemId)) {
+			if (checkListService.delete(principal.getName(), listItemId)) {
 				res.setStatus(204);
-			}
-			else {
+			} else {
 				res.setStatus(404);
 			}
 		} catch (Exception e) {

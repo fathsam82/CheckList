@@ -116,6 +116,7 @@ public class CheckList {
 	public void setCompleteDate(String completeDate) {
 		this.completeDate = completeDate;
 	}
+	
 
 	@Override
 	public String toString() {

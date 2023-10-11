@@ -13,27 +13,27 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class User {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	
+
 	private String email;
-	
+
 	private String username;
-	
+
 	private String password;
-	
+
 	private Boolean enabled;
-	
+
 	private String role;
-	
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "user")
 	private List<CheckList> checklists;
 
 	public User() {
-	
+
 	}
 
 	public int getId() {
@@ -114,8 +114,5 @@ public class User {
 		User other = (User) obj;
 		return id == other.id;
 	}
-	
-	
-	
 
 }

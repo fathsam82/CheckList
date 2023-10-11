@@ -22,7 +22,7 @@ DROP TABLE IF EXISTS `check_list_type` ;
 
 CREATE TABLE IF NOT EXISTS `check_list_type` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(100) NOT NULL,
+  `name` VARCHAR(100) NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -34,12 +34,13 @@ DROP TABLE IF EXISTS `user` ;
 
 CREATE TABLE IF NOT EXISTS `user` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `email` VARCHAR(255) NOT NULL,
-  `username` VARCHAR(255) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
-  `enabled` TINYINT NOT NULL,
+  `email` VARCHAR(255) NULL,
+  `username` VARCHAR(255) NULL,
+  `password` VARCHAR(255) NULL,
+  `enabled` TINYINT(4) NULL,
   `role` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`))
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC))
 ENGINE = InnoDB;
 
 
